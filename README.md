@@ -1,189 +1,403 @@
-# Python-Based Network Monitoring and Intrusion Detection System (IDS)
+﻿# Python-Based Network Monitoring and Intrusion Detection System (IDS)
 
-## 📌 Project Overview
+## Project Overview
 
-The **Network Monitoring and Intrusion Detection System (IDS)** is a Python-based application that monitors network traffic in real time, analyzes packets, detects suspicious activities, and displays results on a web dashboard.
+The **Network Monitoring and Intrusion Detection System (IDS)** is a Python-based
+application that monitors network traffic in real time, detects suspicious
+activities, and sends **instant push notifications to your Android phone** via ntfy.
 
-The system uses **Scapy** for packet capture and **Flask** to provide a web-based dashboard. Network events are stored in a CSV log file for future analysis.
+Built for a Computer Networks college mini-project.
 
-## 🎯 Objectives
+## Features
 
-- Monitor live network packets.
-- Display network traffic statistics.
-- Detect suspicious network activities.
-- Generate real-time intrusion alerts.
-- Store network events in CSV log files.
+| Feature | Description |
+|---|---|
+| Live Packet Monitoring | Captures packets and shows source IP, destination IP, protocol, and port |
+| Traffic Statistics | Displays total packets and TCP / UDP / ICMP counts |
+| Intrusion Detection | Port scan, high-traffic flood, and suspicious-port rules |
+| Real-Time Alerts | Alerts shown on the web dashboard with severity, IP, and timestamp |
+| Push Notifications | Instant Android push via **ntfy** (no Telegram, no Firebase) |
+| Event Logging | All alerts saved to `logs/network_events.csv` |
+| Web Dashboard | Flask dashboard auto-refreshes every 2 seconds |
+| Background Detection | IDS runs even when the browser tab is closed |
 
-## ✨ Features
-
-- **Live Packet Monitoring:** Captures network packets and displays source IP, destination IP, protocol, and destination port.
-- **Traffic Statistics:** Displays total packets and TCP, UDP, and ICMP counts.
-- **Intrusion Detection:** Identifies potentially suspicious activities, such as port scans and unusual traffic patterns, using predefined rules.
-- **Real-Time Alerts:** Displays detected suspicious activities with source IP, description, severity, and timestamp.
-- **Event Logging:** Stores network events in a CSV file for future investigation.
-- **Web Dashboard:** Provides a simple interface for monitoring network activity.
-
-## 🛠️ Technologies Used
+## Technologies Used
 
 | Technology | Purpose |
 |---|---|
-| Python | Main programming language |
-| Flask | Web application and dashboard |
-| Scapy | Network packet capture and analysis |
-| HTML | Dashboard structure |
-| CSS | Dashboard styling |
-| JavaScript | Dynamic dashboard updates |
-| CSV | Network event storage |
+| Python 3.10+ | Main programming language |
+| Flask | Web dashboard |
+| Scapy | Packet capture and analysis |
+| ntfy | Android push notifications via HTTPS |
+| python-dotenv | Environment-variable configuration |
+| requests | HTTP client for ntfy API |
+| HTML / CSS / JS | Dashboard frontend |
+| CSV | Alert log storage |
 
-## 📂 Project Structure
+## Project Structure
 
-```text
-CNS LAB/
-│
-├── app.py
-├── packet_monitor.py
-├── ids.py
-├── logger.py
-│
-├── templates/
-│   └── index.html
-│
-├── static/
-│   └── style.css
-│
-├── logs/
-│   └── network_events.csv
-│
-└── README.md
+```
+Python-Based-Network-Monitoring-and-Intrusion-Detection-System-IDS-/
+|
+|-- app.py                      Flask application and routes
+|-- packet_monitor.py           Background Scapy packet capture thread
+|-- ids.py                      Intrusion detection rules engine
+|-- logger.py                   CSV alert logger
+|-- config.py                   Environment-variable loader
+|
+|-- notifications/
+|   |-- __init__.py
+|   |-- ntfy_notifier.py        ntfy push-notification worker
+|
+|-- templates/
+|   `-- index.html              Dashboard HTML
+|
+|-- static/
+|   `-- style.css               Dashboard CSS
+|
+|-- tests/
+|   `-- test_notifier.py        Automated test suite (39 tests)
+|
+|-- logs/
+|   `-- network_events.csv      Alert log (created automatically)
+|
+|-- .env                        Your local secrets (never commit this)
+|-- .env.example                Template for .env
+|-- requirements.txt            Python dependencies
+`-- README.md
 ```
 
-## ⚙️ Requirements
+---
 
-- Python 3.10 or later
-- Flask
-- Scapy
-- Npcap for packet capture on Windows
-- Cursor or Visual Studio Code (recommended)
-- Administrator privileges may be required for packet capture.
+## Windows 11 Setup (Step-by-Step)
 
-## 🚀 Installation and Setup
+### Prerequisites
 
-### Step 1: Open the project folder
+- Windows 11
+- Python 3.10 or later (from https://python.org – tick "Add to PATH")
+- Visual Studio Code or any terminal
+- Administrator privileges (required for packet capture)
 
-Open the `CNS LAB` folder in Cursor.
+---
 
-### Step 2: Install Python dependencies
+### Step 1 — Install Npcap
 
-Open the terminal and run:
+Npcap enables raw packet capture on Windows.
 
-```bash
-python -m pip install flask scapy
-```
+1. Download the installer from **https://npcap.com/**
+2. Run the installer as Administrator.
+3. Accept the defaults (tick "WinPcap API-compatible Mode" if asked).
+4. Restart your PC or open a new terminal after installing.
 
-### Step 3: Install Npcap on Windows
+---
 
-Download and install Npcap from the official website:
+### Step 2 — Clone or Open the Project
 
-https://npcap.com/
-
-Npcap enables packet capture on Windows. Follow the installer instructions and restart Cursor if necessary.
-
-### Step 4: Run the application
-
-In the terminal, navigate to your project folder:
+Open the project folder in VS Code or navigate to it in PowerShell:
 
 ```powershell
-cd "C:\Users\gd775\Desktop\CNS LAB"
+cd "C:\Users\ACER\Desktop\mini project CN\Python-Based-Network-Monitoring-and-Intrusion-Detection-System-IDS-"
 ```
 
-Start the application:
+---
 
-```bash
+### Step 3 — Install Python Dependencies
+
+Run this in the project folder (inside the VS Code terminal or PowerShell):
+
+```powershell
+pip install -r requirements.txt
+```
+
+`requirements.txt` contains:
+
+```
+flask>=3.0.0
+scapy>=2.5.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+```
+
+---
+
+### Step 4 — Install the ntfy Android App
+
+1. Open the **Google Play Store** on your Android phone.
+2. Search for **ntfy** or go to:
+   `https://play.google.com/store/apps/details?id=io.heckel.ntfy`
+3. Install and open the app.
+4. Tap the **+** (plus) button to subscribe to a topic.
+5. **Choose a unique, hard-to-guess topic name**, for example:
+   ```
+   netsentinel-lab-2026-abc7k
+   ```
+   > Anyone who knows your topic name can send you notifications, so keep it
+   > random and private. Do not use your name or a dictionary word alone.
+6. Tap **Subscribe** — your phone is now listening.
+
+---
+
+### Step 5 — Configure the .env File
+
+Copy the example file and add your topic:
+
+```powershell
+copy .env.example .env
+```
+
+Open `.env` in VS Code (or Notepad) and set your topic:
+
+```env
+NTFY_TOPIC=netsentinel-lab-2026-abc7k
+NTFY_SERVER=https://ntfy.sh
+NTFY_NOTIFICATIONS_ENABLED=true
+NTFY_MIN_SEVERITY=LOW
+NTFY_REQUEST_TIMEOUT=5
+NTFY_MAX_RETRIES=3
+NTFY_ACCESS_TOKEN=
+NTFY_CLICK_URL=
+NOTIFICATION_QUEUE_SIZE=100
+```
+
+> **Important:** Never commit `.env` to Git.
+> It is already listed in `.gitignore`.
+
+---
+
+### Step 6 — Run the Application (as Administrator)
+
+Scapy needs Administrator privileges to capture packets on Windows.
+
+**Option A – VS Code (recommended for demo):**
+
+Right-click VS Code in the Start Menu → **Run as administrator**,
+then open a terminal inside VS Code and run:
+
+```powershell
 python app.py
 ```
 
-### Step 5: Open the dashboard
+**Option B – PowerShell as Administrator:**
+
+```powershell
+# Right-click PowerShell > "Run as Administrator"
+cd "C:\Users\ACER\Desktop\mini project CN\Python-Based-Network-Monitoring-and-Intrusion-Detection-System-IDS-"
+python app.py
+```
+
+You should see:
+
+```
+========================================
+  NetSentinel -- Network IDS
+========================================
+  Dashboard : http://127.0.0.1:5000
+  ntfy      : enabled
+========================================
+Starting network monitoring...
+```
+
+---
+
+### Step 7 — Open the Dashboard
 
 Open your browser and visit:
 
+```
 http://127.0.0.1:5000
-
-The dashboard should display network statistics, live packet information, and intrusion alerts when detection rules are triggered.
-
-## 🔍 How It Works
-
-1. **Packet Capture:** Scapy captures network packets.
-2. **Packet Analysis:** The application extracts packet details such as IP addresses, protocols, and ports.
-3. **Intrusion Detection:** The IDS checks traffic against predefined detection rules.
-4. **Alert Generation:** If suspicious activity matches a rule, the system generates an alert.
-5. **Event Logging:** Network events and detected incidents are recorded in the CSV log file.
-6. **Dashboard Display:** Flask serves the dashboard, which displays traffic statistics and alerts.
-
-## 🚨 Example Intrusion Alert
-
-```text
-Type: Port Scan
-Source IP: 34.98.122.109
-Description: Multiple ports accessed (10)
-Severity: HIGH
-Time: 15:33:02
 ```
 
-This alert indicates that the observed traffic matched the configured port-scan detection rule. It does not prove that the source IP is malicious.
+The dashboard will:
+- Show live packet counts (TCP, UDP, ICMP).
+- Show the last 20 captured packets.
+- Show all IDS security alerts.
+- Show ntfy notification status (Sent / Failed / Pending).
 
-## 📄 Log File
+---
 
-Network events are stored in:
+### Step 8 — Send a Test Notification
 
-```text
+1. On the dashboard, find the **ntfy Notifications** bar at the top.
+2. Click **Send Test**.
+3. Your phone should receive a notification within 1–3 seconds.
+
+If it does not arrive:
+- Check that your topic in `.env` matches the topic in the ntfy app.
+- Check your internet connection.
+- Run the manual curl test below.
+
+**Manual curl test (PowerShell):**
+
+```powershell
+curl -X POST "https://ntfy.sh/YOUR-TOPIC-HERE" `
+     -H "Title: NetSentinel Test" `
+     -d "Test message from NetSentinel IDS"
+```
+
+Replace `YOUR-TOPIC-HERE` with your actual topic name.
+
+---
+
+## How Push Notifications Work
+
+```
+IDS detects alert
+      |
+      v
+ids.py  _create_alert()
+      |
+      v
+ntfy_notifier.enqueue_alert()   <-- non-blocking, returns immediately
+      |
+      v
+Background worker thread
+      |
+      v
+HTTPS POST to https://ntfy.sh/<topic>
+      |
+      v
+ntfy app on Android phone  -->  push notification
+```
+
+The notification includes:
+- **Title:** `[HIGH] Port Scan - NetSentinel`
+- **Priority:** mapped from severity (urgent/high/default/low/min)
+- **Body:** Source IP, detected time, description, event ID
+- **Tag emoji:** matching severity level
+
+---
+
+## Example Push Notification (on your phone)
+
+```
+[HIGH] Port Scan - NetSentinel
+
+Source IP : 192.168.1.105
+Detected  : 14:22:07
+Details   : Probed 10 unique ports in 30s
+Event ID  : A3F1B2C4
+```
+
+---
+
+## Triggering a Test Intrusion (Safe Demo)
+
+To demonstrate a port scan alert during a college presentation, open a second
+PowerShell window and run:
+
+```powershell
+# Windows: scan using nmap (install from https://nmap.org)
+nmap -p 1-100 127.0.0.1
+```
+
+Or use Python (no extra install):
+
+```python
+import socket, time
+for port in range(8000, 8015):
+    try:
+        s = socket.socket()
+        s.settimeout(0.1)
+        s.connect(("127.0.0.1", port))
+        s.close()
+    except:
+        pass
+    time.sleep(0.05)
+print("Port scan simulation complete")
+```
+
+Save as `simulate_scan.py` and run:
+
+```powershell
+python simulate_scan.py
+```
+
+Within a few seconds you should see a "Port Scan" alert on the dashboard and
+receive a push notification on your phone.
+
+---
+
+## Running the Test Suite
+
+```powershell
+python -m pytest tests/ -v
+```
+
+Expected output: **39 passed** — no real network access or Npcap required.
+
+The tests cover:
+- ntfy message body and header formatting
+- Configuration validation
+- Enqueue behaviour (disabled, missing topic, severity filter, dedup, queue full)
+- HTTP send: success, 201, error, rate-limit, timeout, connection error
+- IDS rules: suspicious port, port scan, high traffic, deduplication
+- Logger: CSV append
+- Flask endpoints: home, /api/data, /api/notification_status, /api/test_alert
+
+---
+
+## Detection Rules
+
+| Rule | Trigger | Severity |
+|---|---|---|
+| Suspicious Port Activity | Traffic to port 4444, 5555, or 6666 | HIGH |
+| Port Scan | >= 10 unique destination ports from one IP in 30 seconds | HIGH |
+| High Traffic | >= 100 packets from one IP within 5 seconds | MEDIUM |
+
+---
+
+## Log File
+
+Alerts are appended to:
+
+```
 logs/network_events.csv
 ```
 
-Depending on the logger implementation, records may include:
+Columns: Timestamp, Event ID, Severity, Alert Type, Source IP,
+Destination IP, Destination Port, Description, Notification Status.
 
-- Timestamp
-- Source IP address
-- Destination IP address
-- Protocol
-- Destination port
-- Event type or alert description
+Open with Excel or any CSV viewer.
 
-These records can be reviewed using Excel, a text editor, or a CSV viewer.
+---
 
-## 🔐 Security and Limitations
+## Known Limitations
 
-- Run packet monitoring only on networks and devices you are authorized to monitor.
-- Alerts are based on predefined rules and may produce false positives.
-- This project is an educational prototype, not a replacement for an enterprise-grade IDS.
-- Captured traffic may contain sensitive information. Protect log files and avoid collecting data unnecessarily.
-- The Flask development server is intended for local testing, not public production deployment.
+- **ntfy.sh is a public service** — anyone who discovers your topic name can
+  send messages to it. Use a random, hard-to-guess topic.
+- **Windows Defender / firewall** may interfere with Scapy packet capture.
+  Running as Administrator usually resolves this.
+- **No real-time graphs** — statistics are polled every 2 seconds.
+- **Detection rules are simple** — this is an educational prototype, not an
+  enterprise IDS. Expect false positives on busy networks.
+- **Flask development server** is for local/demo use only.
+- **If the internet is unavailable**, the ntfy worker retries with
+  exponential back-off and logs failures, but local monitoring and
+  the dashboard continue working.
+- **ntfy free tier** has no authentication by default. For real use,
+  consider a self-hosted ntfy instance with access control.
 
-## 🔮 Future Enhancements
+---
 
-- Live traffic graphs and protocol distribution charts.
-- IP-based traffic filtering and search.
-- Improved detection rules and severity classification.
-- Alert history and log download options.
-- Start/stop monitoring controls.
-- Dashboard dark mode and browser notifications.
-- Configurable thresholds and network interface selection.
+## Security Notes
 
-## 🎓 Expected Outcomes
+- Never commit `.env` to Git.
+- The `/api/notification_status` endpoint intentionally omits your topic name.
+- Run packet monitoring only on networks you are authorised to monitor.
+- Captured traffic may contain sensitive data. Protect your log files.
 
-1. Live network packet monitoring.
-2. A visual traffic statistics dashboard.
-3. Detection of suspicious network activity.
-4. Real-time intrusion alerts.
-5. CSV-based network event logs.
+---
 
-## 👨‍💻 Project Information
+## Project Information
 
 **Project Name:** Python-Based Network Monitoring and Intrusion Detection System (IDS)
 
 **Domain:** Computer Networks and Cybersecurity
 
-**Project Type:** Educational / Academic Project
+**Project Type:** Educational / Academic
 
-## 📜 License
+---
 
-This project is intended for educational and learning purposes. Add a license file if you plan to distribute it publicly.
+## License
+
+Educational use. Add a license file if you plan to distribute publicly.
